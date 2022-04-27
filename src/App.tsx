@@ -5,6 +5,9 @@ const dummy_slides = Array.from({ length: 10 }).fill('');
 const perView = 3;
 
 const StyledContent = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
 	height: 30rem;
 	width: 100%;
 	background-color: red;

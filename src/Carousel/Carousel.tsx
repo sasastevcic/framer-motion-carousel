@@ -2,7 +2,7 @@
 import { ReactElement } from 'react';
 import { useCarousel } from '../hooks/useCarousel';
 // import { CarouselProps } from './Carousel.data';
-import { StyledCarousel, StyledWrapper, StyledTrack, StyledSlide } from './Carousel.styles';
+import { StyledCarousel, StyledWrapper, StyledTrack, StyledArrows, StyledPreviousArrow, StyledNextArrow, StyledSlide } from './Carousel.styles';
 
 type CarouselProps = {
 	children: Array<ReactElement>;
@@ -14,7 +14,7 @@ export const Carousel = ({
 	slidesPerView = 1,
 	...props
 }: CarouselProps): ReactElement => {
-  const { slides, controls, variants, handleDragEnd } = useCarousel(slidesPerView);
+  const { slides, currentSlide, controls, variants, handleDragEnd, handleSlideChange } = useCarousel(slidesPerView);
 
 	return (
 		<StyledCarousel {...props}>
@@ -39,22 +39,24 @@ export const Carousel = ({
 					))}
 				</StyledTrack>
 			</StyledWrapper>
-			{/* {options.slides.current.length > 1 && (
-      <StyledArrows>
-        <StyledPreviousArrow
-          onClick={() => options.handleSlideChange('Previous')}
-          disabled={options.currentSlide === 0}
-        >
-          <StyledArrowIcon />
-        </StyledPreviousArrow>
-        <StyledNextArrow
-          onClick={() => options.handleSlideChange('Next')}
-          disabled={options.currentSlide === options.slides.current.length - 1}
-        >
-          <StyledArrowIcon />
-        </StyledNextArrow>
-      </StyledArrows>
-    )} */}
+			{slides.current.length > 1 && (
+				<StyledArrows>
+					<StyledPreviousArrow
+						type="button"
+						onClick={() => handleSlideChange('Previous')}
+						disabled={currentSlide === 0}
+					>
+						Previous
+					</StyledPreviousArrow>
+					<StyledNextArrow
+						type="button"
+						onClick={() => handleSlideChange('Next')}
+						disabled={currentSlide === slides.current.length - slidesPerView}
+					>
+						Next
+					</StyledNextArrow>
+				</StyledArrows>
+			)}
 		</StyledCarousel>
 	);
 };
