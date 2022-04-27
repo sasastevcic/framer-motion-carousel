@@ -1,7 +1,8 @@
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { useAnimation, Variants } from 'framer-motion';
 import { DragHandler } from 'framer-motion/types/gestures/drag/types';
 import { useEvent } from 'react-use';
+import debounce from 'lodash.debounce';
 
 type DirectionType = 'Next' | 'Previous';
 
@@ -30,9 +31,9 @@ export const useCarousel = (slidesPerView = 1) => {
 		},
 	}; 
 
-	const startAnimation = () => {
+	const startAnimation = useCallback(() => {
 		controls.start('translate');
-	};
+	}, [controls]);
 
 	const handleSlideChange = (step: DirectionType) => {
 		if (step === 'Next') {
@@ -75,20 +76,19 @@ export const useCarousel = (slidesPerView = 1) => {
 		}
 	};
 
-	useEvent('resize', () => {
-    // setTranslate(currentSlide * -slideWidth.current)
-  });
+	useEvent('resize', debounce(() => {
+    setSlideWidth(slides.current[0].clientWidth);
+  }, 300));
 
-	useEffect(() => {
+  useEffect(() => {
 		startAnimation();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [currentSlide]);
+  }, [slideWidth, currentSlide, startAnimation]);
 
 	useEffect(() => {
 		if (slides.current.length > 0) {
       setSlideWidth(slides.current[0].clientWidth)
 		}
-	}, []);
+	}, [slides]);
 
 	return {
 		slides,
