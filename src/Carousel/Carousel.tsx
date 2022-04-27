@@ -6,31 +6,31 @@ import { StyledCarousel, StyledWrapper, StyledTrack, StyledSlide } from './Carou
 
 type CarouselProps = {
 	children: Array<ReactElement>;
-	options: ReturnType<typeof useCarousel>;
 	slidesPerView?: number;
 };
 
 export const Carousel = ({
 	children,
-	options,
 	slidesPerView = 1,
 	...props
 }: CarouselProps): ReactElement => {
+  const { slides, controls, variants, handleDragEnd } = useCarousel(slidesPerView);
+
 	return (
 		<StyledCarousel {...props}>
 			<StyledWrapper>
 				<StyledTrack
-					drag={options.slides.current.length > 1 ? 'x' : false}
+					drag={slides.current.length > 1 ? 'x' : false}
 					dragMomentum={false}
-					onDragEnd={options.handleDragEnd}
-					animate={options.controls}
-					variants={options.variants}
+					onDragEnd={handleDragEnd}
+					animate={controls}
+					variants={variants}
 				>
 					{children.map((element, index) => (
 						<StyledSlide
 							key={index}
 							ref={(element: HTMLDivElement) => {
-								options.slides.current[index] = element;
+								slides.current[index] = element;
 							}}
 							$slidesPerView={slidesPerView}
 						>

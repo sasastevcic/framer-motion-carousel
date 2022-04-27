@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { useEffect, useState, useRef, useMemo, useReducer } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useAnimation, Variants } from 'framer-motion';
 import { DragHandler } from 'framer-motion/types/gestures/drag/types';
 import { useEvent } from 'react-use';
@@ -17,10 +16,9 @@ export const useCarousel = (slidesPerView = 1) => {
 	const slides = useRef<Array<HTMLDivElement>>([]);
 	const controls = useAnimation();
 	const [currentSlide, setCurrentSlide] = useState(0);
-	const slideWidth = useRef(0);
-	const [_, forceUpdate] = useReducer(() => [], []);
+	const [slideWidth, setSlideWidth] = useState(0);
 
-  const getTranslate = useMemo(() => -slideWidth.current * currentSlide, [currentSlide]);
+  const getTranslate = useMemo(() => -slideWidth * currentSlide, [currentSlide, slideWidth]);
 
 	const variants: Variants = {
 		translate: {
@@ -49,17 +47,17 @@ export const useCarousel = (slidesPerView = 1) => {
 	};
 
 	const handleDragEnd: DragHandler = (_event, { offset, velocity }) => {
-		const length = Math.round(swipeLength(offset.x, slideWidth.current));
+		const length = Math.round(swipeLength(offset.x, slideWidth));
 		const velocityX = velocity.x;
 
-    const swipeRight = length < 0;
-    const swipeLeft = length > 0;
-    const stepLength = swipeLeft ? Math.ceil(length / 100) : Math.floor(length / 100);
+    const swipeRight = length > 0;
+    const swipeLeft = length < 0;
+    const stepLength = swipeRight ? Math.ceil(length / 100) : Math.floor(length / 100);
     const lastSlide = slides.current.length - slidesPerView;
     const isNotFirst = currentSlide > 0;
     const isNotLast = currentSlide < lastSlide;
 
-    const notFirstNorLast = (isNotFirst || swipeRight) && (isNotLast|| swipeLeft);
+    const notFirstNorLast = (isNotFirst || swipeLeft) && (isNotLast|| swipeRight);
     const isSwipedEnough = Math.abs(length) > MIN_PERCENT || Math.abs(velocityX) > MIN_VELOCITY;
 
     if (isSwipedEnough && notFirstNorLast) {
@@ -88,13 +86,8 @@ export const useCarousel = (slidesPerView = 1) => {
 
 	useEffect(() => {
 		if (slides.current.length > 0) {
-			slideWidth.current = slides.current[0].clientWidth;
+      setSlideWidth(slides.current[0].clientWidth)
 		}
-	}, [slides]);
-
-	useEffect(() => {
-		forceUpdate();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return {

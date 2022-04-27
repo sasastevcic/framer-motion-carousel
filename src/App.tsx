@@ -1,5 +1,4 @@
 import Carousel from './Carousel';
-import { useCarousel } from './hooks/useCarousel';
 import styled from 'styled-components';
 
 const dummy_slides = Array.from({ length: 10 }).fill('');
@@ -12,11 +11,9 @@ const StyledContent = styled.div`
 `;
 
 function App() {
-  const options = useCarousel(perView);
-
   return (
     <div className="App">
-      <Carousel options={options} slidesPerView={perView}>
+      <Carousel slidesPerView={perView}>
         {dummy_slides.map((_, index) => (
           <StyledContent key={index}>
             <h1>{index + 1}</h1>
