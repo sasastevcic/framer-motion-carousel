@@ -27,6 +27,7 @@ export const useCarousel = ({ perView, minPercent, minVelocity }: CarouselHookCo
 	const controls = useAnimation();
 	const [currentSlide, setCurrentSlide] = useState(0);
 	const [slideWidth, setSlideWidth] = useState(0);
+	const [dots, setDots] = useState<Array<number>>([]);
 
 	const getTranslate = useMemo(() => -slideWidth * currentSlide, [currentSlide, slideWidth]);
 
@@ -98,6 +99,17 @@ export const useCarousel = ({ perView, minPercent, minVelocity }: CarouselHookCo
 	);
 
 	useEffect(() => {
+		const generateDots = Array.from(
+			{
+				length: slidesCurrent.length - perView + 1,
+			},
+			(_, index) => index,
+		);
+
+		setDots(generateDots);
+	}, [slidesCurrent, perView]);
+
+	useEffect(() => {
 		startAnimation();
 	}, [slideWidth, currentSlide, startAnimation]);
 
@@ -109,6 +121,7 @@ export const useCarousel = ({ perView, minPercent, minVelocity }: CarouselHookCo
 
 	return {
 		slidesCurrent,
+		dots,
 		currentSlide,
 		controls,
 		variants,

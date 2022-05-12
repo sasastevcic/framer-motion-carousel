@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement } from 'react';
 import { useCarousel } from '../hooks/useCarousel';
 import {
 	StyledCarousel,
@@ -34,10 +34,11 @@ const DEFAULT_CONFIG = {
 };
 
 export const Carousel = ({ children, config, ...props }: CarouselProps): ReactElement => {
-	const mergedConfigs = { ...DEFAULT_CONFIG, ...config };
-	const { perView, showArrows, showDots, ...rest } = mergedConfigs;
+	const mergeConfigs = { ...DEFAULT_CONFIG, ...config };
+	const { perView, showArrows, showDots, ...rest } = mergeConfigs;
 	const {
 		slidesCurrent,
+		dots,
 		currentSlide,
 		controls,
 		variants,
@@ -45,19 +46,6 @@ export const Carousel = ({ children, config, ...props }: CarouselProps): ReactEl
 		handleGoTo,
 		handleSlideChange,
 	} = useCarousel({ perView, ...rest });
-
-	const [dots, setDots] = useState<Array<number>>([]);
-
-	useEffect(() => {
-		const generateDots = Array.from(
-			{
-				length: slidesCurrent.length - perView + 1,
-			},
-			(_, index) => index,
-		);
-
-		setDots(generateDots);
-	}, [slidesCurrent, perView]);
 
 	return (
 		<StyledCarousel {...props}>
