@@ -15,7 +15,7 @@ const StyledContent = styled.div`
 function App() {
 	return (
 		<div className="App">
-			<Carousel config={{ perView: 2 }}>
+			<Carousel config={{ perView: 3 }}>
 				{dummy_slides.map((_, index) => (
 					<StyledContent key={index}>
 						<h1>{index + 1}</h1>

@@ -16,6 +16,8 @@ interface CarouselConfig {
 	showDots?: boolean;
 	showArrows?: boolean;
 	perView?: number;
+	minPercent?: number;
+	minVelocity?: number;
 }
 
 interface CarouselProps {
@@ -27,11 +29,13 @@ const DEFAULT_CONFIG = {
 	perView: 1,
 	showArrows: true,
 	showDots: true,
+	minPercent: 60,
+	minVelocity: 100,
 };
 
 export const Carousel = ({ children, config, ...props }: CarouselProps): ReactElement => {
 	const mergedConfigs = { ...DEFAULT_CONFIG, ...config };
-	const { perView, showArrows, showDots } = mergedConfigs;
+	const { perView, showArrows, showDots, ...rest } = mergedConfigs;
 	const {
 		slidesCurrent,
 		currentSlide,
@@ -40,7 +44,7 @@ export const Carousel = ({ children, config, ...props }: CarouselProps): ReactEl
 		handleDragEnd,
 		handleGoTo,
 		handleSlideChange,
-	} = useCarousel(perView);
+	} = useCarousel({ perView, ...rest });
 
 	const [dots, setDots] = useState<Array<number>>([]);
 

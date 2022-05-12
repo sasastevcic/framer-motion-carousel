@@ -7,8 +7,11 @@ import debounce from 'lodash.debounce';
 type DirectionType = 'Next' | 'Previous';
 type SwipeType = 'Left' | 'Right';
 
-const MIN_PERCENT = 60;
-const MIN_VELOCITY = 100;
+type CarouselHookConfig = {
+	perView: number;
+	minPercent: number;
+	minVelocity: number;
+};
 
 const getSwipeLength = (offset: number, absDistance: number) => {
 	return (offset / absDistance) * 100;
@@ -19,7 +22,7 @@ const getSwipeDirection = (length: number): SwipeType => (length > 0 ? 'Right' :
 const getStepLength = (direction: SwipeType, length: number) =>
 	direction === 'Right' ? Math.ceil(length / 100) : Math.floor(length / 100);
 
-export const useCarousel = (slidesPerView = 1) => {
+export const useCarousel = ({ perView, minPercent, minVelocity }: CarouselHookConfig) => {
 	const { current: slidesCurrent } = useRef<Array<HTMLDivElement>>([]);
 	const controls = useAnimation();
 	const [currentSlide, setCurrentSlide] = useState(0);
@@ -64,13 +67,13 @@ export const useCarousel = (slidesPerView = 1) => {
 		const swipeDirection = getSwipeDirection(length);
 		const stepLength = getStepLength(swipeDirection, length);
 
-		const lastSlide = slidesCurrent.length - slidesPerView;
+		const lastSlide = slidesCurrent.length - perView;
 		const isNotFirst = currentSlide > 0;
 		const isNotLast = currentSlide < lastSlide;
 
 		const notFirstNorLast =
 			(isNotFirst || swipeDirection === 'Left') && (isNotLast || swipeDirection === 'Right');
-		const isSwipedEnough = Math.abs(length) > MIN_PERCENT || Math.abs(velocityX) > MIN_VELOCITY;
+		const isSwipedEnough = Math.abs(length) > minPercent || Math.abs(velocityX) > minVelocity;
 
 		if (isSwipedEnough && notFirstNorLast) {
 			setCurrentSlide((currentState) => {
