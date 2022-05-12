@@ -4,7 +4,7 @@ import { DragHandler } from 'framer-motion/types/gestures/drag/types';
 import { useEvent } from 'react-use';
 import debounce from 'lodash.debounce';
 
-type DirectionType = 'Next' | 'Previous';
+type DirectionType = 'Previous' | 'Next';
 type SwipeType = 'Left' | 'Right';
 
 type CarouselHookConfig = {
