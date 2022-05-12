@@ -12,16 +12,30 @@ import {
   StyledDot,
 } from "./Carousel.styles";
 
-type CarouselProps = {
+interface CarouselConfig {
+  showDots?: boolean;
+  showArrows?: boolean;
+  perView?: number;
+}
+
+interface CarouselProps {
   children: Array<ReactElement>;
-  slidesPerView?: number;
+  config?: CarouselConfig;
+}
+
+const DEFAULT_CONFIG = {
+  perView: 1,
+  showArrows: true,
+  showDots: true,
 };
 
 export const Carousel = ({
   children,
-  slidesPerView = 1,
+  config,
   ...props
 }: CarouselProps): ReactElement => {
+  const mergedConfigs = { ...DEFAULT_CONFIG, ...config };
+  const { perView, showArrows, showDots } = mergedConfigs;
   const {
     slides,
     currentSlide,
@@ -30,7 +44,7 @@ export const Carousel = ({
     handleDragEnd,
     handleGoTo,
     handleSlideChange,
-  } = useCarousel(slidesPerView);
+  } = useCarousel(perView);
 
   const { current: slidesCurrent } = slides;
   const [dots, setDots] = useState<Array<number>>([]);
@@ -38,13 +52,13 @@ export const Carousel = ({
   useEffect(() => {
     const generateDots = Array.from(
       {
-        length: slidesCurrent.length - slidesPerView + 1,
+        length: slidesCurrent.length - perView + 1,
       },
       (_, index) => index
     );
 
     setDots(generateDots);
-  }, [slidesCurrent, slidesPerView]);
+  }, [slidesCurrent, perView]);
 
   return (
     <StyledCarousel {...props}>
@@ -62,7 +76,7 @@ export const Carousel = ({
               ref={(element: HTMLDivElement) => {
                 slidesCurrent[index] = element;
               }}
-              $slidesPerView={slidesPerView}
+              $slidesPerView={perView}
             >
               {element}
             </StyledSlide>
@@ -71,31 +85,35 @@ export const Carousel = ({
       </StyledWrapper>
       {slidesCurrent.length > 1 && (
         <>
-          <StyledArrows>
-            <StyledPreviousArrow
-              type="button"
-              onClick={() => handleSlideChange("Previous")}
-              disabled={currentSlide === 0}
-            >
-              Previous
-            </StyledPreviousArrow>
-            <StyledNextArrow
-              type="button"
-              onClick={() => handleSlideChange("Next")}
-              disabled={currentSlide === slidesCurrent.length - slidesPerView}
-            >
-              Next
-            </StyledNextArrow>
-          </StyledArrows>
-          <StyledDots>
-            {dots.map((dot: number) => (
-              <StyledDot
-                key={dot}
-                onClick={() => handleGoTo(dot)}
-                $isActive={currentSlide === dot}
-              />
-            ))}
-          </StyledDots>
+          {showArrows && (
+            <StyledArrows>
+              <StyledPreviousArrow
+                type="button"
+                onClick={() => handleSlideChange("Previous")}
+                disabled={currentSlide === 0}
+              >
+                Previous
+              </StyledPreviousArrow>
+              <StyledNextArrow
+                type="button"
+                onClick={() => handleSlideChange("Next")}
+                disabled={currentSlide === slidesCurrent.length - perView}
+              >
+                Next
+              </StyledNextArrow>
+            </StyledArrows>
+          )}
+          {showDots && (
+            <StyledDots>
+              {dots.map((dot: number) => (
+                <StyledDot
+                  key={dot}
+                  onClick={() => handleGoTo(dot)}
+                  $isActive={currentSlide === dot}
+                />
+              ))}
+            </StyledDots>
+          )}
         </>
       )}
     </StyledCarousel>
