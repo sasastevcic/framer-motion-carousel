@@ -1,8 +1,5 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { ReactElement } from "react";
-import Dots from "../Dots";
+import { ReactElement, useEffect, useState } from "react";
 import { useCarousel } from "../hooks/useCarousel";
-// import { CarouselProps } from './Carousel.data';
 import {
   StyledCarousel,
   StyledWrapper,
@@ -11,6 +8,8 @@ import {
   StyledPreviousArrow,
   StyledNextArrow,
   StyledSlide,
+  StyledDots,
+  StyledDot,
 } from "./Carousel.styles";
 
 type CarouselProps = {
@@ -33,11 +32,25 @@ export const Carousel = ({
     handleSlideChange,
   } = useCarousel(slidesPerView);
 
+  const { current: slidesCurrent } = slides;
+  const [dots, setDots] = useState<Array<number>>([]);
+
+  useEffect(() => {
+    const generateDots = Array.from(
+      {
+        length: slidesCurrent.length - slidesPerView + 1,
+      },
+      (_, index) => index
+    );
+
+    setDots(generateDots);
+  }, [slidesCurrent, slidesPerView]);
+
   return (
     <StyledCarousel {...props}>
       <StyledWrapper>
         <StyledTrack
-          drag={slides.current.length > 1 ? "x" : false}
+          drag={slidesCurrent.length > 1 ? "x" : false}
           dragMomentum={false}
           onDragEnd={handleDragEnd}
           animate={controls}
@@ -47,7 +60,7 @@ export const Carousel = ({
             <StyledSlide
               key={index}
               ref={(element: HTMLDivElement) => {
-                slides.current[index] = element;
+                slidesCurrent[index] = element;
               }}
               $slidesPerView={slidesPerView}
             >
@@ -56,7 +69,7 @@ export const Carousel = ({
           ))}
         </StyledTrack>
       </StyledWrapper>
-      {slides.current.length > 1 && (
+      {slidesCurrent.length > 1 && (
         <>
           <StyledArrows>
             <StyledPreviousArrow
@@ -69,16 +82,20 @@ export const Carousel = ({
             <StyledNextArrow
               type="button"
               onClick={() => handleSlideChange("Next")}
-              disabled={currentSlide === slides.current.length - slidesPerView}
+              disabled={currentSlide === slidesCurrent.length - slidesPerView}
             >
               Next
             </StyledNextArrow>
           </StyledArrows>
-          <Dots
-            count={slides.current.length - slidesPerView + 1}
-            currentSlide={currentSlide}
-            onClick={handleGoTo}
-          />
+          <StyledDots>
+            {dots.map((dot: number) => (
+              <StyledDot
+                key={dot}
+                onClick={() => handleGoTo(dot)}
+                $isActive={currentSlide === dot}
+              />
+            ))}
+          </StyledDots>
         </>
       )}
     </StyledCarousel>
