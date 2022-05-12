@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { ReactElement } from "react";
+import Dots from "../Dots";
 import { useCarousel } from "../hooks/useCarousel";
 // import { CarouselProps } from './Carousel.data';
 import {
@@ -10,8 +11,6 @@ import {
   StyledPreviousArrow,
   StyledNextArrow,
   StyledSlide,
-  StyledDots,
-  StyledDot,
 } from "./Carousel.styles";
 
 type CarouselProps = {
@@ -33,12 +32,6 @@ export const Carousel = ({
     handleGoTo,
     handleSlideChange,
   } = useCarousel(slidesPerView);
-
-  const generateDots = Array.from({
-    length: slides.current.length - slidesPerView + 1,
-  }).map((_, index) => index);
-
-  console.log(generateDots);
 
   return (
     <StyledCarousel {...props}>
@@ -81,11 +74,11 @@ export const Carousel = ({
               Next
             </StyledNextArrow>
           </StyledArrows>
-          <StyledDots>
-            {generateDots.map((dot) => (
-              <StyledDot key={dot} onClick={() => handleGoTo(dot)} />
-            ))}
-          </StyledDots>
+          <Dots
+            count={slides.current.length - slidesPerView + 1}
+            currentSlide={currentSlide}
+            onClick={handleGoTo}
+          />
         </>
       )}
     </StyledCarousel>

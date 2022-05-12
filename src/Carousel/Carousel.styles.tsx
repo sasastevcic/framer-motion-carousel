@@ -49,22 +49,3 @@ export const StyledSlide = styled.div<{ $slidesPerView: number }>`
   flex: 0 0 ${({ $slidesPerView }) => `${100 / $slidesPerView}%`};
   padding: 0 2vw;
 `;
-
-export const StyledDots = styled.div`
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-`;
-
-export const StyledDot = styled.button`
-  background-color: #000;
-  border: 0;
-  padding: 0;
-  margin: 0 5px;
-  border-radius: 50%;
-  height: 20px;
-  width: 20px;
-`;
