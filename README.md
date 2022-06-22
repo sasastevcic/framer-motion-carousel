@@ -1,4 +1,4 @@
-## Vercel [link](https://framer-motion-carousel.vercel.app/).
+## https://framer-motion-carousel.vercel.app/
 
 # Getting Started with Create React App
 
